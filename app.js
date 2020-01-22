@@ -79,7 +79,7 @@ Suggestion.Suggestion.belongsTo(User.User);
 User.User.hasMany(Suggestion.Suggestion);
 
 sequelize
-  .sync({force: true})
+  .sync()
   .then(result => {
     // console.log(result);
     app.listen(5000, () => console.log("Server running on port 5000"));
