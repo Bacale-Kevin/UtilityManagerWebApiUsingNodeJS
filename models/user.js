@@ -16,12 +16,21 @@ const User = sequelize.define("user", {
     allowNull: false
   },
   lastName: Sequelize.STRING,
-  sex: Sequelize.STRING,
+  sex: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   phone: Sequelize.STRING,
   residence: Sequelize.STRING,
-  email: Sequelize.STRING,
+  email: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   role: Sequelize.STRING,
-  idCardNumber: Sequelize.STRING,
+  idCardNumber: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   password: {
     type: Sequelize.STRING,
     allowNull: false
