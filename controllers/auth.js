@@ -54,14 +54,20 @@ exports.loginUser = (req, res, next) => {
       const token = jwt.sign(
         {
           email: loadedUser.email,
-          id: loadedUser.id
+          id: loadedUser.id,
+          role: loadedUser.role
         },
         "somesupersecretsecret",
         { expiresIn: "1d" }
       );
       res
         .status(200)
-        .json({ id: loadedUser.id, email: loadedUser.email, token: token });
+        .json({
+          id: loadedUser.id,
+          email: loadedUser.email,
+          role: loadedUser.role,
+          token: token
+        });
     })
     .catch(error => {
       console.log(error);
