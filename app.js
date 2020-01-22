@@ -15,8 +15,19 @@ const Structure = require("./models/structure");
 const Suggestion = require("./models/suggestion");
 const Town = require("./models/town");
 const Item = require("./models/item");
+const AuthRoutes = require('./routes/auth');
 
 const app = express();
+
+app.use(bodyparser.json());
+app.use(
+  bodyparser.urlencoded({
+    extended: true
+  })
+);
+
+app.use('/auth', AuthRoutes);
+
 
 Item.Item.belongsTo(Category.Category);
 Category.Category.hasMany(Item.Item);
@@ -68,7 +79,7 @@ Suggestion.Suggestion.belongsTo(User.User);
 User.User.hasMany(Suggestion.Suggestion);
 
 sequelize
-  .sync()
+  .sync({force: true})
   .then(result => {
     // console.log(result);
     app.listen(5000, () => console.log("Server running on port 5000"));
