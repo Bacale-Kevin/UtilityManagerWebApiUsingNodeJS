@@ -16,6 +16,7 @@ const Suggestion = require("./models/suggestion");
 const Town = require("./models/town");
 const Item = require("./models/item");
 const AuthRoutes = require('./routes/auth');
+const RoleRoutes = require('./routes/role');
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(
 );
 
 app.use('/auth', AuthRoutes);
+app.use('/role', RoleRoutes);
 
 
 Item.Item.belongsTo(Category.Category);
