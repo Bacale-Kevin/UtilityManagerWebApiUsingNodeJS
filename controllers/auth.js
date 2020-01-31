@@ -10,9 +10,19 @@ exports.signUp = (req, res, next) => {
       .status(422)
       .json({ message: "Validation failed", errors: errors.array() });
   }
+
   const password = req.body.password;
   bcrypt.hash(password, 12).then(hashedPw => {
+    accessToken = jwt.sign(
+      {
+        id: req.body.id
+      },
+      "somesupersecretsecret",
+      { expiresIn: "1d" }
+    );
+
     Model.User.create({
+      id: accessToken,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       sex: req.body.sex,
@@ -21,7 +31,8 @@ exports.signUp = (req, res, next) => {
       email: req.body.email,
       role: req.body.role,
       idCardNumber: req.body.idCardNumber,
-      password: hashedPw
+      password: hashedPw,
+      accessToken: accessToken
     })
       .then(result =>
         res.json({ message: "User registered succesfully", result })
@@ -51,28 +62,35 @@ exports.loginUser = (req, res, next) => {
         return res.status(401).send("Password is invalid");
       }
       //If the email and password is found in the db return the token
+     
       const token = jwt.sign(
         {
-          email: loadedUser.email,
-          id: loadedUser.id,
-          role: loadedUser.role
+          id: loadedUser.id
         },
         "somesupersecretsecret",
         { expiresIn: "1d" }
       );
-      res
-        .status(200)
-        .json({
-          id: loadedUser.id,
-          email: loadedUser.email,
-          role: loadedUser.role,
-          token: token
-        });
+      console.log('My token: ',token);
+  
+    Model.User.update(
+      {
+        accessToken: token
+      },
+      { where: {id: loadedUser.email} }
+    )
+    .then(result => {
+      res.json({
+        email: loadedUser.email,
+        role: loadedUser.role
+      });
     })
     .catch(error => {
       console.log(error);
-      res.status(500).json(error);
+      res.json(error);
     });
+      
+    });
+    
 };
 
 exports.getAllUsers = (req, res, next) => {

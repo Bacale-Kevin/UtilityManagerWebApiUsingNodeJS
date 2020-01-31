@@ -5,8 +5,8 @@ const sequelize = require("../server");
 //sequelize.define enables us to define a new table
 const User = sequelize.define("user", {
   id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
+    type: Sequelize.STRING,
+    // autoIncrement: true,
     allowNull: false,
     primaryKey: true,
     timestamp: false
@@ -26,7 +26,11 @@ const User = sequelize.define("user", {
     type: Sequelize.STRING,
     allowNull: false
   },
-  role: Sequelize.STRING,
+  role: {
+    type: Sequelize.STRING,
+    default: "seller",
+    enum: ["seller", "manager", "admin"]
+  },
   idCardNumber: {
     type: Sequelize.STRING,
     allowNull: false
@@ -34,6 +38,10 @@ const User = sequelize.define("user", {
   password: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  accessToken: {
+    type: Sequelize.STRING(1000)
+    
   }
 });
 

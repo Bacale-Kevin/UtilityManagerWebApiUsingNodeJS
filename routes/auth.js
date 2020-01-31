@@ -66,6 +66,6 @@ router.post(
 
 router.post("/login", AuthController.loginUser);
 
-router.get("/users", isAuth, AuthController.getAllUsers);
+router.get("/users",  AuthController.getAllUsers);
 
 module.exports = router;
