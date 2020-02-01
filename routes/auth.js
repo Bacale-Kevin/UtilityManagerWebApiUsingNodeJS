@@ -4,6 +4,27 @@ const { body } = require("express-validator");
 const router = express.Router();
 const Model = require("../models/user");
 const isAuth = require("../middleware/is-auth");
+const accessControl = require("accesscontrol");
+
+// const role = Model.User.findOne({
+//   where: {role: req.body.role}
+// })
+
+const ac = new accessControl();
+
+ac.grant("seller")
+  .readOwn("user", ["*", "!id"])
+  .updateOwn("user");
+
+ac.grant("manager")
+  .extend("seller")
+  .readAny("user");
+
+ac.grant("admin")
+  .extend("seller")
+  .extend("manager")
+  .updateAny("user")
+  .deleteAny("user");
 
 router.post(
   "/signup",
@@ -66,6 +87,35 @@ router.post(
 
 router.post("/login", AuthController.loginUser);
 
-router.get("/users",  AuthController.getAllUsers);
+router.get(
+  "/users",
+  isAuth.isLoggedIn,
+  (req, res, next) => {
+    
+    const permission = ac.can(req.user).readAny("user");
+    console.log("Permission", permission.granted);
+    console.log(permission.attributes);
+    if (!permission.granted) {
+      return res.status(401).json({
+        error: "You don't have enough permission to perform this action"
+      });
+    }
+    next();
+  },
+  AuthController.getAllUsers
+);
+router.put(
+  "/users/:id",
+  isAuth.isLoggedIn,
+  isAuth.grantAccess("updateAny", "user"),
+  AuthController.updateUser
+);
+router.delete(
+  "/users/:id",
+  isAuth.isLoggedIn,
+  isAuth.grantAccess("deleteAny", "user"),
+  AuthController.deleteUser
+);
 
+router.get("/create", isAuth.isLoggedIn);
 module.exports = router;
