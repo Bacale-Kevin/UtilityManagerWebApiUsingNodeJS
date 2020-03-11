@@ -22,7 +22,6 @@ exports.signUp = (req, res, next) => {
     );
 
     Model.User.create({
-      id: accessToken,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       sex: req.body.sex,
@@ -31,8 +30,7 @@ exports.signUp = (req, res, next) => {
       email: req.body.email,
       role: req.body.role,
       idCardNumber: req.body.idCardNumber,
-      password: hashedPw,
-      accessToken: accessToken
+      password: hashedPw
     })
       .then(result =>
         res.json({ message: "User registered succesfully", result })
@@ -72,14 +70,6 @@ exports.loginUser = (req, res, next) => {
         { expiresIn: "1d" }
       );
 
-      Model.User.update(
-        {
-          id: token.id
-        },
-        { where: { id: req.body.id } }
-      );
-      console.log(token);
-
       res.status(200).json({
         token: token,
         id: userLoaded.id,
@@ -100,7 +90,7 @@ exports.getAllUsers = (req, res, next) => {
 
 exports.getOneUser = (req, res, next) => {
   Model.User.findOne({
-    where: { id: req.body.id }
+    where: { id: req.params.id }
   })
     .then(result => {
       if (!result) {
@@ -141,7 +131,7 @@ exports.deleteUser = (req, res, next) => {
       if (!result) {
         res.send("User not found");
       }
-      res.send("Suggestion deleted successfully").status(200);
+      res.json({massage: "User deleted successfully"})
     })
     .catch(error => res.json(error));
 };

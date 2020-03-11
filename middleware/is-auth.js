@@ -20,6 +20,7 @@ const  {roles}  = require('../server/role');
   if (!decodedToken) {
     return res.status(401).send("Not authenticated");
   }
+  //Extract the information from the toke  and take the role
   req.user = decodedToken.role;
   console.log('checking ...', req.user);
   next();

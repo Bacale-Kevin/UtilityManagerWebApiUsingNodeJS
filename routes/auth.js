@@ -13,18 +13,14 @@ const accessControl = require("accesscontrol");
 const ac = new accessControl();
 
 ac.grant("seller")
-  .readOwn("user", ["*", "!id"])
-  .updateOwn("user");
 
 ac.grant("manager")
   .extend("seller")
-  .readAny("user");
+  .readAny("user")
+  .updateAny('user')
+  .delete('user')
 
 ac.grant("admin")
-  .extend("seller")
-  .extend("manager")
-  .updateAny("user")
-  .deleteAny("user");
 
 router.post(
   "/signup",
@@ -87,6 +83,24 @@ router.post(
 
 router.post("/login", AuthController.loginUser);
 
+//Get a single user
+router.get('/user/:id', 
+  isAuth.isLoggedIn,
+  (req, res, next) => {
+    
+    const permission = ac.can(req.user).readOwn("user");
+    console.log("Permission", permission.granted);
+    console.log(permission.attributes);
+    if (!permission.granted) {
+      return res.status(401).json({
+        error: "You don't have enough permission to perform this action"
+      });
+    }
+    next();
+  }
+,AuthController.getOneUser);
+
+//Get all users
 router.get(
   "/users",
   isAuth.isLoggedIn,
@@ -104,16 +118,43 @@ router.get(
   },
   AuthController.getAllUsers
 );
+
+
+//Update user
 router.put(
-  "/users/:id",
+  "/user/:id",
   isAuth.isLoggedIn,
-  isAuth.grantAccess("updateAny", "user"),
+  (req, res, next) => {
+    
+    const permission = ac.can(req.user).updateAny("user");
+    console.log("Permission", permission.granted);
+    console.log(permission.attributes);
+    if (!permission.granted) {
+      return res.status(401).json({
+        error: "You don't have enough permission to perform this action"
+      });
+    }
+    next();
+  },
   AuthController.updateUser
 );
+
+//delete user
 router.delete(
-  "/users/:id",
+  "/user/:id",
   isAuth.isLoggedIn,
-  isAuth.grantAccess("deleteAny", "user"),
+  (req, res, next) => {
+    
+    const permission = ac.can(req.user).deleteAny("user");
+    console.log("Permission", permission.granted);
+    console.log(permission.attributes);
+    if (!permission.granted) {
+      return res.status(401).json({
+        error: "You don't have enough permission to perform this action"
+      });
+    }
+    next();
+  },
   AuthController.deleteUser
 );
 

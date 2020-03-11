@@ -5,8 +5,8 @@ const sequelize = require("../server");
 //sequelize.define enables us to define a new table
 const User = sequelize.define("user", {
   id: {
-    type: Sequelize.STRING,
-    // autoIncrement: true,
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
     allowNull: false,
     primaryKey: true,
     timestamp: false
@@ -38,10 +38,6 @@ const User = sequelize.define("user", {
   password: {
     type: Sequelize.STRING,
     allowNull: false
-  },
-  accessToken: {
-    type: Sequelize.STRING(1000)
-    
   }
 });
 
