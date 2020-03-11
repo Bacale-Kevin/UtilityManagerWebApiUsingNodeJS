@@ -34,7 +34,7 @@ router.post(
     body("email")
       .trim()
       .notEmpty()
-      .isEmail()
+      .isEmail() //Verify that the email address taken by the user does not exist in the DB since email should be unique to every users 
       .custom((value, { req }) => {
         return Model.User.findOne({ where: { email: value } }).then(
           userEmail => {
@@ -60,7 +60,7 @@ router.post(
       }),
     body("idCardNumber")
       .trim()
-      .notEmpty()
+      .notEmpty()//IDCard should have exactly 9 varchar length
       .isLength({ min: 9, max: 9 })
       .custom((value, { req }) => {
         return Model.User.findOne({ where: { idCardNumber: value } }).then(
@@ -84,8 +84,10 @@ router.post(
 router.post("/login", AuthController.loginUser);
 
 //Get a single user
-router.get('/user/:id', 
+router.get('/user/:id',
+//IsLoggedIn is our middleware that allows only users that have login to access this route 
   isAuth.isLoggedIn,
+  //This middleware checks if the users can access these route base on its role
   (req, res, next) => {
     
     const permission = ac.can(req.user).readOwn("user");

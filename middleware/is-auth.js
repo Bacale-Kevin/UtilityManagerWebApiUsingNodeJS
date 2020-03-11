@@ -3,6 +3,7 @@ const  {roles}  = require('../server/role');
 
 //Middleware to allow access to only login users 
   exports.isLoggedIn = (req, res, next) => {
+    //Getting the auth header
   const authHeader = req.get("Authorization");
   if (!authHeader) {
     res.status(401).send("Not authenticated");
