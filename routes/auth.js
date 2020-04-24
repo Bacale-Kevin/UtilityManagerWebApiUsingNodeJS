@@ -22,8 +22,10 @@ ac.grant("manager")
 
 ac.grant("admin")
 
+//SignUp users
 router.post(
   "/signup",
+  //Adding some server side validation as a middleware
   [
     body("firstName")
       .notEmpty()
@@ -50,6 +52,7 @@ router.post(
       .trim()
       .notEmpty()
       .custom((value, { req }) => {
+        //Checking if the entered phone number already exist
         return Model.User.findOne({ where: { phone: value } }).then(
           userPhone => {
             if (userPhone) {
@@ -71,7 +74,7 @@ router.post(
           }
         );
       }),
-    body("sex")
+    body("role")
       .trim()
       .notEmpty(),
     body("password")
@@ -102,7 +105,7 @@ router.get('/user/:id',
   }
 ,AuthController.getOneUser);
 
-//Get all users
+  //Get all users
 router.get(
   "/users",
   isAuth.isLoggedIn,

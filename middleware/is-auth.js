@@ -21,20 +21,23 @@ const  {roles}  = require('../server/role');
   if (!decodedToken) {
     return res.status(401).send("Not authenticated");
   }
+  /* Don't forget isLoggedIn is a middleware that which information can be accessible by the next middleware
+  req.user = decodedToken.role which means in the next middleware we can access req.user to have the role found in our decoded token
+  that is why in our next middleware that is accessControl we can access req.user   */
   //Extract the information from the toke  and take the role
   req.user = decodedToken.role;
   console.log('checking ...', req.user);
   next();
 };
 
-
+//These middleware those not work when exporting it to the route folder so i implimented it directly in the routes 
 exports.grantAccess = function(action, resource) {
 
   return async (req, res, next) => {
  
    try {
  
-    const permission = roles.can(req.user.role);
+    const permission = roles.can(req.user);
  
     if (!permission.granted) {
  

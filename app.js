@@ -15,8 +15,10 @@ const Structure = require("./models/structure");
 const Suggestion = require("./models/suggestion");
 const Town = require("./models/town");
 const Item = require("./models/item");
-const AuthRoutes = require('./routes/auth');
-const RoleRoutes = require('./routes/role');
+const AuthRoutes = require("./routes/auth");
+const RoleRoutes = require("./routes/role");
+const SuggestionRoutes = require("./routes/suggestion");
+const CountryRoutes = require("./routes/country");
 
 const app = express();
 
@@ -27,9 +29,20 @@ app.use(
   })
 );
 
-app.use('/auth', AuthRoutes);
-app.use('/role', RoleRoutes);
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "OPTIONS, GET, POST, PUT, PATCH, DELETE"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
 
+app.use("/auth", AuthRoutes);
+app.use("/role", RoleRoutes);
+app.use(CountryRoutes);
+app.use(SuggestionRoutes);
 
 Item.Item.belongsTo(Category.Category);
 Category.Category.hasMany(Item.Item);

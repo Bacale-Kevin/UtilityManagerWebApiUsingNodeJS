@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 exports.signUp = (req, res, next) => {
+  
   /* Server side validation was been added in the routes folder using express-validator
   so we can extract the validation result using destructuring as shown above in the import ({validationResult})
   we access these result using validationResult(req) as mention below
@@ -12,7 +13,7 @@ exports.signUp = (req, res, next) => {
   const errors = validationResult(req);
   //if there are errors throw the message Validation failed appended with the errors array to the user
   if (!errors.isEmpty()) {
-    res
+   return res
       .status(422)
       .json({ message: "Validation failed", errors: errors.array() });
   }
@@ -23,10 +24,10 @@ exports.signUp = (req, res, next) => {
   bcrypt.hash(password, 12).then(hashedPw => {
     accessToken = jwt.sign(
       {
-        id: req.body.id
+        id: req.body.id 
       },
       "somesupersecretsecret",
-      { expiresIn: "1d" }
+      { expiresIn: "1d" } 
     );
 //Registring the user in the database with the help of Sequelize our ORM
     Model.User.create({
@@ -41,7 +42,8 @@ exports.signUp = (req, res, next) => {
       password: hashedPw
     })
       .then(result =>
-        res.json({ message: "User registered succesfully", result })
+        res.status(201)
+        .json({ message: "User registered succesfully", result })
       )
       .catch(error => {
         console.log(error);
